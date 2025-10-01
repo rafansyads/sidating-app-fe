@@ -1,40 +1,34 @@
 import { describe, it, expect } from 'vitest'
-import { createWebHistory } from 'vue-router'
 import router from '../../router/index'
 import HomeView from '../../views/HomeView.vue'
 import ProfileView from '../../views/profile/ProfileView.vue'
+import PostView from '../../views/post/PostView.vue'
 
 describe('Router', () => {
-  it('should have correct route configuration', () => {
+  it('should have correct route configuration (profiles & posts)', () => {
     const routes = router.getRoutes()
-    expect(routes).toHaveLength(5)
+    expect(routes).toHaveLength(9)
 
-    // Check home route
-    const homeRoute = routes.find(route => route.path === '/')
-    expect(homeRoute).toBeDefined()
-    expect(homeRoute?.name).toBe('home')
-    expect(homeRoute?.components?.default).toBe(HomeView)
+    // Helper to get component from route (Vue Router stores it on components.default)
+    const getComponent = (path: string) => routes.find(r => r.path === path)?.components?.default
 
-    // Check profiles route
-    const profilesRoute = routes.find(route => route.path === '/profiles')
-    expect(profilesRoute).toBeDefined()
-    expect(profilesRoute?.name).toBe('profile')
-    expect(profilesRoute?.components?.default).toBe(ProfileView)
+    // Home
+    expect(getComponent('/')).toBe(HomeView)
+    expect(routes.find(r => r.path === '/')?.name).toBe('home')
 
-    // Check createProfile route
-    const createProfileRoute = routes.find(route => route.path === '/profiles/add')
-    expect(createProfileRoute).toBeDefined()
-    expect(createProfileRoute?.name).toBe('create-profile')
-    
-    // Check editProfile route
-    const editProfileRoute = routes.find(route => route.path === '/profiles/:id/edit')
-    expect(editProfileRoute).toBeDefined()
-    expect(editProfileRoute?.name).toBe('edit-profile')
+    // Profiles core routes
+    expect(getComponent('/profiles')).toBe(ProfileView)
+    expect(routes.find(r => r.path === '/profiles')?.name).toBe('profile')
+    expect(routes.find(r => r.path === '/profiles/add')?.name).toBe('create-profile')
+    expect(routes.find(r => r.path === '/profiles/:id/edit')?.name).toBe('edit-profile')
+    expect(routes.find(r => r.path === '/profiles/:id')?.name).toBe('detail-profile')
 
-    // Check detail profile route
-    const detailProfileRoute = routes.find(route => route.path === '/profiles/:id')
-    expect(detailProfileRoute).toBeDefined()
-    expect(detailProfileRoute?.name).toBe('detail-profile')
+    // Posts routes
+    expect(getComponent('/posts')).toBe(PostView)
+    expect(routes.find(r => r.path === '/posts')?.name).toBe('posts')
+    expect(routes.find(r => r.path === '/posts/create')?.name).toBe('create-post')
+    expect(routes.find(r => r.path === '/posts/:id/edit')?.name).toBe('edit-post')
+    expect(routes.find(r => r.path === '/posts/:id')?.name).toBe('detail-post')
   })
 
   it('should navigate to home route', async () => {

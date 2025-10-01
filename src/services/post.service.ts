@@ -76,20 +76,14 @@ export class PostService {
   }
 
   likePost(id: string, userId: string): boolean {
-    const post = this.getPost(id); // Temukan post berdasarkan ID
-    if (post) {
-      const likeIndex = post.likes.indexOf(userId);
-
-      if (likeIndex > -1) {
-        // Jika userId SUDAH ADA di array, hapus (UNLIKE)
-        post.likes.splice(likeIndex, 1);
-      } else {
-        // Jika userId TIDAK ADA, tambahkan (LIKE)
-        post.likes.push(userId);
-      }
-      return true; // Berhasil
+    const post = this.getPost(id)
+    if (!post) return false
+    // If already liked, do nothing and return false (idempotent like)
+    if (post.likes.includes(userId)) {
+      return false
     }
-    return false; // Gagal (post tidak ditemukan)
+    post.likes.push(userId)
+    return true
   }
 
   filter(user: string, sort: string): Post[] {

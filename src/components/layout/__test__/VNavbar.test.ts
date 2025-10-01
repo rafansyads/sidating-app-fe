@@ -8,6 +8,7 @@ const router = createRouter({
   routes: [
     { path: '/', component: { template: '<div>Home</div>' } },
     { path: '/profiles', component: { template: '<div>Profiles</div>' } },
+    { path: '/posts', component: { template: '<div>Posts</div>' } },
   ]
 })
 
@@ -112,7 +113,7 @@ describe('VNavbar', () => {
     expect(nav.classes()).toContain('flex')
     expect(nav.classes()).toContain('gap-4')
     const navLinks = nav.findAllComponents({ name: 'RouterLink' })
-    expect(navLinks).toHaveLength(1) // Only Profile link is in nav
+    expect(navLinks).toHaveLength(2) // Profile + Posts links inside nav
   })
 
   it('should call getLinkClass function correctly', async () => {
@@ -144,12 +145,13 @@ describe('VNavbar', () => {
       }
     })
     const routerlinks = wrapper.findAllComponents({ name: 'RouterLink' })
-    expect(routerlinks).toHaveLength(2) // brand link + Profile link
+    expect(routerlinks).toHaveLength(3) // brand link + Profile + Posts links
 
     // Check all links are present
     const linkTargets = routerlinks.map(link => link.props('to'))
     expect(linkTargets).toContain('/')
     expect(linkTargets).toContain('/profiles')
+    expect(linkTargets).toContain('/posts')
   })
 
   it('should be accessible and semantic', async () => {
