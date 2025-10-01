@@ -10,25 +10,25 @@ describe('Router', () => {
     expect(routes).toHaveLength(9)
 
     // Helper to get component from route (Vue Router stores it on components.default)
-    const getComponent = (path: string) => routes.find(r => r.path === path)?.components?.default
+    const getComponent = (path: string) => routes.find((r) => r.path === path)?.components?.default
 
     // Home
     expect(getComponent('/')).toBe(HomeView)
-    expect(routes.find(r => r.path === '/')?.name).toBe('home')
+    expect(routes.find((r) => r.path === '/')?.name).toBe('home')
 
     // Profiles core routes
     expect(getComponent('/profiles')).toBe(ProfileView)
-    expect(routes.find(r => r.path === '/profiles')?.name).toBe('profile')
-    expect(routes.find(r => r.path === '/profiles/add')?.name).toBe('create-profile')
-    expect(routes.find(r => r.path === '/profiles/:id/edit')?.name).toBe('edit-profile')
-    expect(routes.find(r => r.path === '/profiles/:id')?.name).toBe('detail-profile')
+    expect(routes.find((r) => r.path === '/profiles')?.name).toBe('profile')
+    expect(routes.find((r) => r.path === '/profiles/add')?.name).toBe('create-profile')
+    expect(routes.find((r) => r.path === '/profiles/:id/edit')?.name).toBe('edit-profile')
+    expect(routes.find((r) => r.path === '/profiles/:id')?.name).toBe('detail-profile')
 
     // Posts routes
     expect(getComponent('/posts')).toBe(PostView)
-    expect(routes.find(r => r.path === '/posts')?.name).toBe('posts')
-    expect(routes.find(r => r.path === '/posts/create')?.name).toBe('create-post')
-    expect(routes.find(r => r.path === '/posts/:id/edit')?.name).toBe('edit-post')
-    expect(routes.find(r => r.path === '/posts/:id')?.name).toBe('detail-post')
+    expect(routes.find((r) => r.path === '/posts')?.name).toBe('posts')
+    expect(routes.find((r) => r.path === '/posts/create')?.name).toBe('create-post')
+    expect(routes.find((r) => r.path === '/posts/:id/edit')?.name).toBe('edit-post')
+    expect(routes.find((r) => r.path === '/posts/:id')?.name).toBe('detail-post')
   })
 
   it('should navigate to home route', async () => {

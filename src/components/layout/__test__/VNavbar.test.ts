@@ -9,7 +9,7 @@ const router = createRouter({
     { path: '/', component: { template: '<div>Home</div>' } },
     { path: '/profiles', component: { template: '<div>Profiles</div>' } },
     { path: '/posts', component: { template: '<div>Posts</div>' } },
-  ]
+  ],
 })
 
 describe('VNavbar', () => {
@@ -21,8 +21,8 @@ describe('VNavbar', () => {
   it('should render correctly', async () => {
     const wrapper = mount(VNavbar, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     expect(wrapper.find('header').exists()).toBe(true)
     expect(wrapper.find('nav').exists()).toBe(true)
@@ -32,8 +32,8 @@ describe('VNavbar', () => {
   it('should have correct header structure and classes', async () => {
     const wrapper = mount(VNavbar, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     const header = wrapper.find('header')
     expect(header.classes()).toContain('fixed')
@@ -52,8 +52,8 @@ describe('VNavbar', () => {
   it('should display SiDating brand link', async () => {
     const wrapper = mount(VNavbar, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     const brandLink = wrapper.findAllComponents({ name: 'RouterLink' })[0]
     expect(brandLink.props('to')).toBe('/')
@@ -66,8 +66,8 @@ describe('VNavbar', () => {
   it('should display Profile navigation link', async () => {
     const wrapper = mount(VNavbar, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     const profileLink = wrapper.findAllComponents({ name: 'RouterLink' })[1]
     expect(profileLink.props('to')).toBe('/profiles')
@@ -79,8 +79,8 @@ describe('VNavbar', () => {
     await router.isReady()
     const wrapper = mount(VNavbar, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     const profileLink = wrapper.findAllComponents({ name: 'RouterLink' })[1]
     // when not on /profiles, should have default classes
@@ -94,8 +94,8 @@ describe('VNavbar', () => {
     await router.isReady()
     const wrapper = mount(VNavbar, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     const profileLink = wrapper.findAllComponents({ name: 'RouterLink' })[1]
     // when on /profiles, should have active class
@@ -106,8 +106,8 @@ describe('VNavbar', () => {
   it('should have navigation structure', async () => {
     const wrapper = mount(VNavbar, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     const nav = wrapper.find('nav')
     expect(nav.classes()).toContain('flex')
@@ -121,8 +121,8 @@ describe('VNavbar', () => {
     await router.isReady()
     const wrapper = mount(VNavbar, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     // Test the getLinkClass function indirectly through the rendered classes
     const profileLink = wrapper.findAllComponents({ name: 'RouterLink' })[1]
@@ -133,7 +133,7 @@ describe('VNavbar', () => {
     // Navigate to profiles page
     await router.push('/profiles')
     await wrapper.vm.$nextTick()
-    
+
     // Should have active classes when active
     expect(profileLink.classes()).toContain('text-pink-600')
   })
@@ -141,14 +141,14 @@ describe('VNavbar', () => {
   it('should have all Routerlinks', async () => {
     const wrapper = mount(VNavbar, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     const routerlinks = wrapper.findAllComponents({ name: 'RouterLink' })
     expect(routerlinks).toHaveLength(3) // brand link + Profile + Posts links
 
     // Check all links are present
-    const linkTargets = routerlinks.map(link => link.props('to'))
+    const linkTargets = routerlinks.map((link) => link.props('to'))
     expect(linkTargets).toContain('/')
     expect(linkTargets).toContain('/profiles')
     expect(linkTargets).toContain('/posts')
@@ -157,16 +157,16 @@ describe('VNavbar', () => {
   it('should be accessible and semantic', async () => {
     const wrapper = mount(VNavbar, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     // Should use semantic HTML elements
     expect(wrapper.find('header').exists()).toBe(true)
     expect(wrapper.find('nav').exists()).toBe(true)
-    
+
     // Links should be properly structured
     const links = wrapper.findAllComponents({ name: 'RouterLink' })
-    links.forEach(link => {
+    links.forEach((link) => {
       expect(link.text()).toBeTruthy() // All links should have text
     })
   })
