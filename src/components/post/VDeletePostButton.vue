@@ -9,19 +9,16 @@ const props = defineProps<{
 
 const emit = defineEmits(['deleted']);
 
-const handleDelete = () => {
-  // Minta konfirmasi sebelum menghapus
-  if (confirm('Apakah Anda yakin ingin menghapus post ini?')) {
-    const success = postService.deletePost(props.postId);
-    if (success) {
-      toast.success('Post berhasil dihapus.');
-      // Kirim event ke parent bahwa post ini telah dihapus
-      emit('deleted', props.postId); 
-    } else {
-      toast.error('Gagal menghapus post.');
-    }
+const handleDelete = async () => {
+  if (!confirm('Apakah Anda yakin ingin menghapus post ini?')) return
+  const success = await postService.deletePost(props.postId)
+  if (success) {
+    toast.success('Post berhasil dihapus.')
+    emit('deleted', props.postId)
+  } else {
+    toast.error('Gagal menghapus post.')
   }
-};
+}
 </script>
 
 <template>

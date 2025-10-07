@@ -5,18 +5,16 @@ import { profileService } from '@/services/profile.service'
 import { format } from 'date-fns'
 import VButton from '@/components/common/VButton.vue'
 import type { UserProfile } from '@/interfaces/profile.interface'
-
+import { useUserProfileStore } from '@/stores/profile/profile.store'
 const route = useRoute()
 const router = useRouter()
-
+const userProfileStore = useUserProfileStore()
 const { id: profileId } = route.params as { id: string }
-
 const profile = ref(undefined as undefined | UserProfile)
-
 const getProfile = async () => {
-  profile.value = await profileService.getProfile(profileId as string)
+  const getUserProfileResponse = await userProfileStore.getProfileById(profileId as string)
+  profile.value = getUserProfileResponse ?? undefined
 }
-
 onMounted(async () => {
   await getProfile()
   if (!profile.value) {
@@ -66,11 +64,11 @@ onMounted(async () => {
         </div>
         <div class="md:col-span-2">
           <span class="text-sm text-gray-500">Hobi</span>
-          <p class="text-lg font-bold">{{ profile?.hobbies?.join(", ") }}</p>
+          <p class="text-lg font-bold">{{ profile?.hobbies }}</p>
         </div>
         <div class="md:col-span-2">
           <span class="text-sm text-gray-500">Minat</span>
-          <p class="text-lg font-bold">{{ profile?.interests?.join(", ") }}</p>
+          <p class="text-lg font-bold">{{ profile?.interests }}</p>
         </div>
         <div>
           <span class="text-sm text-gray-500">Email</span>
@@ -92,12 +90,12 @@ onMounted(async () => {
             {{ profile ? format(new Date(profile.updatedAt), 'EEEE, dd MMMM yyyy') : "-" }}
           </p>
         </div>
-        <div class="flex gap-4 pt-6">
-          <VButton @click="router.back()" class="bg-slate-600 hover:bg-slate-800 text-white">Kembali</VButton>
-          <RouterLink :to="`/profiles/${profileId}/edit`" class="w-full">
-            <VButton class="bg-pink-600 hover:bg-pink-800 text-white w-full">Edit</VButton>
-          </RouterLink>
-        </div>
+      </div>
+      <div class="flex gap-4 pt-6">
+        <VButton @click="router.back()" class="bg-slate-600 hover:bg-slate-800 text-white">Kembali</VButton>
+        <RouterLink :to="`/profiles/${profileId}/edit`" class="w-full">
+          <VButton class="bg-pink-600 hover:bg-pink-800 text-white w-full">Edit</VButton>
+        </RouterLink>
       </div>
     </div>
   </main>

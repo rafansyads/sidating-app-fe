@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import type { Post } from '@/interfaces/post.interface';
+import type { UserProfile } from '@/interfaces/profile.interface';
 import { format } from 'date-fns';
 import { id as indonesia } from 'date-fns/locale';
 import VDeletePostButton from './VDeletePostButton.vue';
-import VLikeButton from './VLikeButton.vue';
+import { postService } from '@/services/post.service';
+import { ref, reactive } from 'vue';
+import { toast } from 'vue-sonner';
 
-defineProps<{
+const props = defineProps<{
   post: Post;
+  profiles?: UserProfile[];
+  loadingProfiles?: boolean;
 }>();
 
 const emit = defineEmits(['post-deleted']);
@@ -14,6 +19,34 @@ const emit = defineEmits(['post-deleted']);
 // Fungsi untuk meneruskan event dari VDeletePostButton ke parent (PostView)
 const handlePostDeleted = (postId: string) => {
   emit('post-deleted', postId);
+};
+
+// Like handling with user selection
+const selectedUserId = ref<string>('');
+const isLiking = ref<boolean>(false);
+const localState = reactive({
+  likes: [...props.post.likes],
+  likeCount: props.post.likeCount ?? props.post.likes.length
+});
+
+const canLike = () => selectedUserId.value !== '' && !isLiking.value;
+
+const handleLike = async () => {
+  if (!canLike()) return;
+  isLiking.value = true;
+  const success = await postService.likePost(props.post.id, selectedUserId.value);
+  if (success) {
+    if (!localState.likes.includes(selectedUserId.value)) {
+      localState.likes.push(selectedUserId.value);
+      localState.likeCount = (localState.likeCount || 0) + 1;
+    } else {
+      toast.info('User ini sudah menyukai post.');
+    }
+    toast.success('Like berhasil.');
+  } else {
+    toast.error('Gagal melakukan like.');
+  }
+  isLiking.value = false;
 };
 </script>
 
@@ -28,11 +61,30 @@ const handlePostDeleted = (postId: string) => {
         <p>by {{ post.userId }}</p>
         <p>{{ format(post.createdAt, 'dd MMMM yyyy', { locale: indonesia }) }}</p>
       </div>
-      <div class="border-t pt-3 flex items-center justify-between">
-        <VLikeButton :post-id="post.id" :initial-likes="post.likes" />
-        <div class="flex items-center gap-3">
-          <RouterLink :to="`/posts/${post.id}/edit`" class="text-blue-600 hover:underline text-sm">Edit</RouterLink>
-          <VDeletePostButton :post-id="post.id" @deleted="handlePostDeleted" />
+      <div class="border-t pt-3 flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-600">Likes: {{ localState.likeCount }}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <select
+            v-model="selectedUserId"
+            class="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500"
+            :disabled="loadingProfiles || isLiking"
+          >
+            <option value="">Pilih User</option>
+            <option v-for="p in profiles" :key="p.id" :value="p.id">{{ p.name || p.id }}</option>
+          </select>
+          <button
+            @click="handleLike"
+            :disabled="!selectedUserId || isLiking"
+            class="text-xs px-3 py-1 rounded-md text-white bg-pink-600 disabled:opacity-50 hover:bg-pink-700 transition"
+          >
+            {{ isLiking ? '...' : 'Like' }}
+          </button>
+          <div class="ml-auto flex items-center gap-3">
+            <RouterLink :to="`/posts/${post.id}/edit`" class="text-blue-600 hover:underline text-sm">Edit</RouterLink>
+            <VDeletePostButton :post-id="post.id" @deleted="handlePostDeleted" />
+          </div>
         </div>
       </div>
     </div>
