@@ -19,13 +19,10 @@ const isLiked = computed(() => likes.value.includes(currentUserId));
 // src/components/post/VLikeButton.vue
 
 const toggleLike = async () => {
-  const success = await postService.likePost(props.postId, currentUserId)
-  if (success) {
-    if (isLiked.value) {
-      likes.value = likes.value.filter(id => id !== currentUserId)
-    } else {
-      likes.value.push(currentUserId)
-    }
+  const updated = await postService.likePost(props.postId, currentUserId)
+  if (updated) {
+    // authoritative refresh from backend
+    likes.value = [...updated.likes]
   }
 }
 </script>

@@ -87,7 +87,7 @@ onMounted(() => {
         </RouterLink>
       </div>
 
-      <VPostFilter :users="uniqueUsers" @filter-change="handleFilterChange" />
+  <VPostFilter :users="uniqueUsers" :profiles="profiles" @filter-change="handleFilterChange" />
 
       <div v-if="loading" class="text-center text-gray-500 mt-10 bg-white p-10 rounded-lg shadow">
         Memuat data post...

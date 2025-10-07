@@ -14,6 +14,7 @@ interface PostResponseDTO {
   likes: string[]
   likeCount?: number
   timeAgo?: string
+  likedByCurrentUser?: boolean
 }
 
 // Helper to map backend PostResponseDTO to frontend Post interface
@@ -112,20 +113,19 @@ export class PostService {
     }
   }
 
-  async likePost(id: string, userProfileId: string): Promise<boolean> {
+  async likePost(id: string, userProfileId: string): Promise<Post | null> {
     try {
-      await http.post<CommonResponseInterface<void>>('/posts/like', { id, userProfileId })
-      // Optimistic update
-      const post = this.cache.find(p => p.id === id)
-      if (post) {
-        if (!post.likes.includes(userProfileId)) {
-          post.likes.push(userProfileId)
-          post.likeCount = (post.likeCount || 0) + 1
-        }
+      const response = await http.post<CommonResponseInterface<PostResponseDTO>>('/posts/like', { id, userProfileId })
+      const dto = response.data?.data
+      if (dto) {
+        const mapped = mapDtoToPost(dto)
+        const idx = this.cache.findIndex(p => p.id === mapped.id)
+        if (idx >= 0) this.cache[idx] = mapped; else this.cache.push(mapped)
+        return mapped
       }
-      return true
+      return null
     } catch {
-      return false
+      return null
     }
   }
 

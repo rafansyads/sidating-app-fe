@@ -34,17 +34,14 @@ const canLike = () => selectedUserId.value !== '' && !isLiking.value;
 const handleLike = async () => {
   if (!canLike()) return;
   isLiking.value = true;
-  const success = await postService.likePost(props.post.id, selectedUserId.value);
-  if (success) {
-    if (!localState.likes.includes(selectedUserId.value)) {
-      localState.likes.push(selectedUserId.value);
-      localState.likeCount = (localState.likeCount || 0) + 1;
-    } else {
-      toast.info('User ini sudah menyukai post.');
-    }
-    toast.success('Like berhasil.');
+  const updated = await postService.likePost(props.post.id, selectedUserId.value);
+  if (updated) {
+    localState.likes = [...updated.likes];
+    localState.likeCount = updated.likeCount ?? updated.likes.length;
+    const stillLiked = updated.likes.includes(selectedUserId.value);
+    toast.success(stillLiked ? 'Like berhasil.' : 'Berhasil batal like.');
   } else {
-    toast.error('Gagal melakukan like.');
+    toast.error('Gagal memproses like.');
   }
   isLiking.value = false;
 };
@@ -58,7 +55,7 @@ const handleLike = async () => {
     <div class="p-4 flex flex-col flex-grow">
       <p class="text-gray-700 mb-4 flex-grow">{{ post.caption }}</p>
       <div class="text-xs text-gray-500 mb-3">
-        <p>by {{ post.userId }}</p>
+          <p>by {{ post.userProfileName || post.userId }}</p>
         <p>{{ format(post.createdAt, 'dd MMMM yyyy', { locale: indonesia }) }}</p>
       </div>
       <div class="border-t pt-3 flex flex-col gap-3">
