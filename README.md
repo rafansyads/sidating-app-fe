@@ -14,6 +14,10 @@ TypeScript cannot handle type information for `.vue` imports by default, so we r
 
 See [Vite Configuration Reference](https://vite.dev/config/).
 
+## Screenshot Hasil Coverage
+![alt text](image.png)
+![alt text](image-1.png)
+
 ## Project Setup
 
 ```sh
